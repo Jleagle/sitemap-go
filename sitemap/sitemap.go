@@ -2,6 +2,7 @@ package sitemap
 
 import (
 	"encoding/xml"
+	"net/http"
 	"time"
 )
 
@@ -42,9 +43,16 @@ func (smi *sitemapIndex) AddSitemap(location string, lastModified time.Time) {
 	smi.SiteMaps = append(smi.SiteMaps, sm)
 }
 
-func (smi sitemapIndex) Bytes() ([]byte, error) {
+func (smi sitemapIndex) Write(w http.ResponseWriter) (int, error) {
+
 	bytes, err := xml.Marshal(smi)
-	return []byte(xml.Header + string(bytes)), err
+	if err != nil {
+		return 0, err
+	}
+
+	w.Header().Set("Content-Type", "application/xml")
+
+	return w.Write([]byte(xml.Header + string(bytes)))
 }
 
 type Sitemap struct {
@@ -78,9 +86,16 @@ func (set *urlSet) AddLocation(location string, lastModified time.Time, changeFr
 	set.Locations = append(set.Locations, loc)
 }
 
-func (set urlSet) Bytes() ([]byte, error) {
+func (set urlSet) Write(w http.ResponseWriter) (int, error) {
+
 	bytes, err := xml.Marshal(set)
-	return []byte(xml.Header + string(bytes)), err
+	if err != nil {
+		return 0, err
+	}
+
+	w.Header().Set("Content-Type", "application/xml")
+
+	return w.Write([]byte(xml.Header + string(bytes)))
 }
 
 type Location struct {
