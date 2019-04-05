@@ -36,13 +36,13 @@ type sitemapIndex struct {
 	SiteMaps  []Sitemap `xml:"sitemap"`
 }
 
-func (smi *sitemapIndex) addSitemap(location string, lastModified time.Time) {
+func (smi *sitemapIndex) AddSitemap(location string, lastModified time.Time) {
 	sm := Sitemap{Location: location}
-	sm.setModified(lastModified)
+	sm.SetModified(lastModified)
 	smi.SiteMaps = append(smi.SiteMaps, sm)
 }
 
-func (smi sitemapIndex) bytes() ([]byte, error) {
+func (smi sitemapIndex) Bytes() ([]byte, error) {
 	return xml.Marshal(smi)
 }
 
@@ -51,7 +51,7 @@ type Sitemap struct {
 	LastModified string `xml:"lastmod,omitempty"`
 }
 
-func (sm *Sitemap) setModified(time time.Time) {
+func (sm *Sitemap) SetModified(time time.Time) {
 	sm.LastModified = time.Format(iso8601)
 }
 
@@ -69,13 +69,13 @@ type urlSet struct {
 	Locations []Location `xml:"url"`
 }
 
-func (set *urlSet) addLocation(location string, lastModified time.Time, changeFrequency ChangeFrequency, priority float32) {
+func (set *urlSet) AddLocation(location string, lastModified time.Time, changeFrequency ChangeFrequency, priority float32) {
 	loc := Location{Location: location, ChangeFrequency: changeFrequency, Priority: priority}
-	loc.setModified(lastModified)
+	loc.SetModified(lastModified)
 	set.Locations = append(set.Locations, loc)
 }
 
-func (set urlSet) bytes() ([]byte, error) {
+func (set urlSet) Bytes() ([]byte, error) {
 	return xml.Marshal(set)
 }
 
@@ -86,6 +86,6 @@ type Location struct {
 	Priority        float32         `xml:"priority,omitempty"`
 }
 
-func (sm *Location) setModified(time time.Time) {
+func (sm *Location) SetModified(time time.Time) {
 	sm.LastModified = time.Format(iso8601)
 }
