@@ -11,16 +11,16 @@ const (
 	iso8601   = time.RFC3339
 )
 
-type ChangeFrequency string
+type changeFrequency string
 
 const (
-	frequencyAlways  ChangeFrequency = "always"
-	frequencyHourly  ChangeFrequency = "hourly"
-	frequencyDaily   ChangeFrequency = "daily"
-	frequencyWeekly  ChangeFrequency = "weekly"
-	frequencyMonthly ChangeFrequency = "monthly"
-	frequencyYearly  ChangeFrequency = "yearly"
-	frequencyNever   ChangeFrequency = "never"
+	FrequencyAlways  changeFrequency = "always"
+	FrequencyHourly  changeFrequency = "hourly"
+	FrequencyDaily   changeFrequency = "daily"
+	FrequencyWeekly  changeFrequency = "weekly"
+	FrequencyMonthly changeFrequency = "monthly"
+	FrequencyYearly  changeFrequency = "yearly"
+	FrequencyNever   changeFrequency = "never"
 )
 
 // Sitemap index
@@ -80,7 +80,7 @@ type urlSet struct {
 	Locations []Location `xml:"url"`
 }
 
-func (set *urlSet) AddLocation(location string, lastModified time.Time, changeFrequency ChangeFrequency, priority float32) {
+func (set *urlSet) AddLocation(location string, lastModified time.Time, changeFrequency changeFrequency, priority float32) {
 	loc := Location{Location: location, ChangeFrequency: changeFrequency, Priority: priority}
 	loc.SetModified(lastModified)
 	set.Locations = append(set.Locations, loc)
@@ -101,7 +101,7 @@ func (set urlSet) Write(w http.ResponseWriter) (int, error) {
 type Location struct {
 	Location        string          `xml:"loc"`
 	LastModified    string          `xml:"lastmod,omitempty"`
-	ChangeFrequency ChangeFrequency `xml:"changefreq,omitempty"`
+	ChangeFrequency changeFrequency `xml:"changefreq,omitempty"`
 	Priority        float32         `xml:"priority,omitempty"`
 }
 
