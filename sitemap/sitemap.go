@@ -43,7 +43,8 @@ func (smi *sitemapIndex) AddSitemap(location string, lastModified time.Time) {
 }
 
 func (smi sitemapIndex) Bytes() ([]byte, error) {
-	return xml.Marshal(smi)
+	bytes, err := xml.Marshal(smi)
+	return []byte(xml.Header + string(bytes)), err
 }
 
 type Sitemap struct {
@@ -76,7 +77,8 @@ func (set *urlSet) AddLocation(location string, lastModified time.Time, changeFr
 }
 
 func (set urlSet) Bytes() ([]byte, error) {
-	return xml.Marshal(set)
+	bytes, err := xml.Marshal(set)
+	return []byte(xml.Header + string(bytes)), err
 }
 
 type Location struct {
