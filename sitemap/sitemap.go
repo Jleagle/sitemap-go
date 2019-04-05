@@ -53,7 +53,9 @@ type Sitemap struct {
 }
 
 func (sm *Sitemap) SetModified(time time.Time) {
-	sm.LastModified = time.Format(iso8601)
+	if !time.IsZero() {
+		sm.LastModified = time.Format(iso8601)
+	}
 }
 
 // Sitemap
@@ -89,5 +91,7 @@ type Location struct {
 }
 
 func (sm *Location) SetModified(time time.Time) {
-	sm.LastModified = time.Format(iso8601)
+	if !time.IsZero() {
+		sm.LastModified = time.Format(iso8601)
+	}
 }
