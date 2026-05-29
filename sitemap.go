@@ -1,4 +1,4 @@
-package sitemap_go
+package sitemap
 
 const (
 	namespace      = "http://www.sitemaps.org/schemas/sitemap/0.9"

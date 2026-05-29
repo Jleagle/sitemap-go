@@ -1,4 +1,4 @@
-package sitemap_go
+package sitemap
 
 import (
 	"bytes"
