@@ -17,11 +17,11 @@ func New() *Sitemap {
 
 // Sitemap represents a sitemap urlset.
 type Sitemap struct {
-	XMLName        xml.Name   `xml:"urlset"`
-	Namespace      string     `xml:"xmlns,attr"`
-	ImageNamespace string     `xml:"xmlns:image,attr,omitempty"`
-	VideoNamespace string     `xml:"xmlns:video,attr,omitempty"`
-	Locations      []Location `xml:"url"`
+	XMLName        xml.Name    `xml:"urlset"`
+	Namespace      string      `xml:"xmlns,attr"`
+	ImageNamespace string      `xml:"xmlns:image,attr,omitempty"`
+	VideoNamespace string      `xml:"xmlns:video,attr,omitempty"`
+	Locations      []*Location `xml:"url"`
 }
 
 // AddLocation adds a new location to the sitemap.
@@ -34,11 +34,11 @@ func (s *Sitemap) AddLocation(location string, lastModified time.Time, changeFre
 		priority = 1
 	}
 
-	loc := Location{Location: location, ChangeFrequency: changeFrequency, Priority: priority}
+	loc := &Location{Location: location, ChangeFrequency: changeFrequency, Priority: priority}
 	loc.SetModified(lastModified)
 	s.Locations = append(s.Locations, loc)
 
-	return &s.Locations[len(s.Locations)-1]
+	return loc
 }
 
 // String returns the XML string representation of the sitemap.
@@ -52,14 +52,19 @@ func (s *Sitemap) String() (string, error) {
 }
 
 // WriteTo writes the sitemap XML to the provided writer.
-func (s *Sitemap) WriteTo(w io.Writer) (int64, error) {
-	_, err := w.Write([]byte(xml.Header))
+func (s *Sitemap) WriteTo(w io.Writer) (n int64, err error) {
+	_, err = w.Write([]byte(xml.Header))
 	if err != nil {
 		return 0, err
 	}
 
 	enc := xml.NewEncoder(w)
-	defer enc.Close()
+	defer func() {
+		cerr := enc.Close()
+		if err == nil {
+			err = cerr
+		}
+	}()
 
 	err = enc.Encode(s)
 	if err != nil {

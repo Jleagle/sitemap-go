@@ -15,16 +15,17 @@ func NewIndex() *Index {
 
 // Index represents a sitemap index.
 type Index struct {
-	XMLName   xml.Name       `xml:"sitemapindex"`
-	Namespace string         `xml:"xmlns,attr"`
-	SiteMaps  []IndexSitemap `xml:"sitemap"`
+	XMLName   xml.Name        `xml:"sitemapindex"`
+	Namespace string          `xml:"xmlns,attr"`
+	SiteMaps  []*IndexSitemap `xml:"sitemap"`
 }
 
 // AddSitemap adds a new sitemap to the index.
-func (i *Index) AddSitemap(location string, lastModified time.Time) {
-	sm := IndexSitemap{Location: location}
+func (i *Index) AddSitemap(location string, lastModified time.Time) *IndexSitemap {
+	sm := &IndexSitemap{Location: location}
 	sm.SetModified(lastModified)
 	i.SiteMaps = append(i.SiteMaps, sm)
+	return sm
 }
 
 // String returns the XML string representation of the index.
@@ -38,14 +39,19 @@ func (i *Index) String() (string, error) {
 }
 
 // WriteTo writes the index XML to the provided writer.
-func (i *Index) WriteTo(w io.Writer) (int64, error) {
-	_, err := w.Write([]byte(xml.Header))
+func (i *Index) WriteTo(w io.Writer) (n int64, err error) {
+	_, err = w.Write([]byte(xml.Header))
 	if err != nil {
 		return 0, err
 	}
 
 	enc := xml.NewEncoder(w)
-	defer enc.Close()
+	defer func() {
+		cerr := enc.Close()
+		if err == nil {
+			err = cerr
+		}
+	}()
 
 	err = enc.Encode(i)
 	if err != nil {
